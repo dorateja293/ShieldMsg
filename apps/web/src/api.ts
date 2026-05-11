@@ -31,6 +31,18 @@ export interface MessageScanResult {
   scannedAt: string;
 }
 
+export interface ScanHistoryRecord {
+  id: string;
+  text: string;
+  files: FileScanInput[];
+  level: RiskLevel;
+  score: number;
+  urls: ScanResult[];
+  fileResults: ScanResult[];
+  summary: string;
+  createdAt: string;
+}
+
 const apiBaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:4000";
 
 export async function scanMessage(text: string, files: FileScanInput[]): Promise<MessageScanResult> {
@@ -47,4 +59,15 @@ export async function scanMessage(text: string, files: FileScanInput[]): Promise
   }
 
   return response.json() as Promise<MessageScanResult>;
+}
+
+export async function fetchScanHistory(): Promise<ScanHistoryRecord[]> {
+  const response = await fetch(`${apiBaseUrl}/scan/history?limit=5`);
+
+  if (!response.ok) {
+    throw new Error("Unable to load scan history");
+  }
+
+  const payload = (await response.json()) as { records: ScanHistoryRecord[] };
+  return payload.records;
 }

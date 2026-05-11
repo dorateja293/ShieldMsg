@@ -7,13 +7,14 @@ import {
   Loader2,
   MessageCircle,
   Paperclip,
+  RefreshCcw,
   Send,
   Shield,
   ShieldAlert,
   UserRound,
   X
 } from "lucide-react";
-import { FileScanInput, MessageScanResult, RiskLevel, scanMessage } from "./api";
+import { fetchScanHistory, FileScanInput, MessageScanResult, RiskLevel, ScanHistoryRecord, scanMessage } from "./api";
 
 interface ChatMessage {
   id: number;
@@ -68,10 +69,16 @@ function App() {
   const [files, setFiles] = useState<FileScanInput[]>([]);
   const [messages, setMessages] = useState(initialMessages);
   const [draftScan, setDraftScan] = useState<MessageScanResult | null>(null);
+  const [scanHistory, setScanHistory] = useState<ScanHistoryRecord[]>([]);
   const [scanState, setScanState] = useState<"idle" | "scanning" | "error">("idle");
+  const [historyState, setHistoryState] = useState<"idle" | "loading" | "error">("idle");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const hasDraftContent = draft.trim().length > 0 || files.length > 0;
+
+  useEffect(() => {
+    loadScanHistory();
+  }, []);
 
   useEffect(() => {
     if (!hasDraftContent) {
@@ -124,8 +131,19 @@ function App() {
       setFiles([]);
       setDraftScan(null);
       setScanState("idle");
+      void loadScanHistory();
     } catch {
       setScanState("error");
+    }
+  }
+
+  async function loadScanHistory() {
+    setHistoryState("loading");
+    try {
+      setScanHistory(await fetchScanHistory());
+      setHistoryState("idle");
+    } catch {
+      setHistoryState("error");
     }
   }
 
@@ -175,6 +193,29 @@ function App() {
             </span>
           </button>
         </nav>
+
+        <section className="history-panel" aria-label="Recent scans">
+          <div className="panel-title">
+            <span>Recent scans</span>
+            <button aria-label="Refresh scan history" type="button" onClick={() => void loadScanHistory()}>
+              <RefreshCcw size={15} className={historyState === "loading" ? "spin" : ""} />
+            </button>
+          </div>
+          {historyState === "error" ? (
+            <p>History unavailable</p>
+          ) : scanHistory.length === 0 ? (
+            <p>No saved scans yet</p>
+          ) : (
+            <div className="history-list">
+              {scanHistory.map((record) => (
+                <div className="history-item" key={record.id}>
+                  <RiskBadge level={record.level} />
+                  <span>{record.text || record.files[0]?.name || "File scan"}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
       </aside>
 
       <section className="chat-surface" aria-label="Secure conversation">
