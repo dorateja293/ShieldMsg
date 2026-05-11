@@ -2,10 +2,12 @@
 
 ## Overview
 
-ShieldMsg separates the user experience, API boundary, and detection logic so each layer can evolve independently.
+ShieldMsg uses the MERN stack and separates the user experience, API boundary, persistence layer, and detection logic so each layer can evolve independently.
 
 ```text
 React client -> Express API -> Threat engine
+                    |
+                 MongoDB
 ```
 
 ## Frontend
@@ -15,6 +17,10 @@ The React app provides a messaging interface where users can paste links, attach
 ## Backend
 
 The Express service exposes scan endpoints and validates request payloads with Zod. It returns structured scan results that the frontend can render consistently.
+
+## Database
+
+MongoDB stores scan history through Mongoose models. Each record captures the original message text, file metadata, risk level, score, URL results, file results, summary, and creation timestamp. The API falls back to in-memory history when MongoDB is unavailable so the demo remains usable.
 
 ## Threat Engine
 
@@ -36,7 +42,8 @@ The threat engine is a reusable TypeScript package. It scores URLs and file meta
 2. The web app sends text and file metadata to `/scan/message`.
 3. The API extracts links and passes links/files to the threat engine.
 4. The engine returns risk scores, reasons, and recommendations.
-5. The UI renders Safe, Suspicious, or Dangerous labels in the chat.
+5. The API saves the scan result in MongoDB.
+6. The UI renders Safe, Suspicious, or Dangerous labels in the chat and shows recent scan history.
 
 ## Future Enhancements
 
