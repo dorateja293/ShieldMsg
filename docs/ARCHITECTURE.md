@@ -1,54 +1,48 @@
-# ShieldMsg Architecture
+# SentinelChat Architecture
 
-## Overview
-
-ShieldMsg uses the MERN stack and separates the user experience, API boundary, persistence layer, and detection logic so each layer can evolve independently.
+SentinelChat is a MERN social media and real-time messaging platform with a built-in cybersecurity pipeline.
 
 ```text
-React client -> Express API -> Threat engine
-                    |
-                 MongoDB
+React + Tailwind UI
+        |
+Axios + Socket.io-client
+        |
+Express API + Socket.io Gateway
+        |
+MongoDB Atlas / Local MongoDB
+        |
+Threat Detection Services
 ```
 
-## Frontend
+## Core Backend Modules
 
-The React app provides a messaging interface where users can paste links, attach files, and see safety labels before sending. Draft content is scanned with a short debounce to keep the experience responsive.
+- `controllers`: HTTP request handling.
+- `routes`: REST API boundaries.
+- `models`: Mongoose schemas and indexes.
+- `middleware`: JWT auth, upload validation, rate limiting, error handling.
+- `services`: link scanning, file scanning, phishing detection, message processing.
+- `sockets`: real-time messaging and presence.
+- `utils`: shared helpers such as link extraction and threat classification.
 
-## Backend
+## Threat Pipeline
 
-The Express service exposes scan endpoints and validates request payloads with Zod. It returns structured scan results that the frontend can render consistently.
+1. Message is sent through REST or Socket.io.
+2. Links are extracted from message text.
+3. URLs are scored with local heuristics, AI-style phishing signals, VirusTotal, and Google Safe Browsing when keys are configured.
+4. Uploaded files are validated, hashed with SHA-256, and checked with local file rules plus VirusTotal hash lookup.
+5. Results are normalized into `safe`, `suspicious`, or `dangerous`.
+6. The message is stored with security metadata.
+7. Dangerous content is hidden or blocked in the UI.
 
-## Database
+## Threat Levels
 
-MongoDB stores scan history through Mongoose models. Each record captures the original message text, file metadata, risk level, score, URL results, file results, summary, and creation timestamp. The API falls back to in-memory history when MongoDB is unavailable so the demo remains usable.
+- 0-30: safe
+- 31-70: suspicious
+- 71-100: dangerous
 
-## Threat Engine
+## Scalability Notes
 
-The threat engine is a reusable JavaScript package. It scores URLs and file metadata using transparent rules:
-
-- Missing HTTPS.
-- Shortened URLs.
-- Raw IP hostnames.
-- Suspicious top-level domains.
-- Brand impersonation.
-- Executable downloads.
-- APK files and executable file extensions.
-- Macro-enabled Office documents.
-- Double-extension filenames.
-
-## Data Flow
-
-1. A user drafts a message or attaches a file.
-2. The web app sends text and file metadata to `/scan/message`.
-3. The API extracts links and passes links/files to the threat engine.
-4. The engine returns risk scores, reasons, and recommendations.
-5. The API saves the scan result in MongoDB.
-6. The UI renders Safe, Suspicious, or Dangerous labels in the chat and shows recent scan history.
-
-## Future Enhancements
-
-- Add user accounts and end-to-end encrypted conversations.
-- Integrate live reputation APIs such as Google Safe Browsing or VirusTotal.
-- Add file hashing and sandbox analysis for uploaded binaries.
-- Store scan history for abuse analytics.
-- Add reporting workflows for suspicious senders.
+- MongoDB indexes are defined on users, messages, friendships, notifications, and threat logs.
+- Chat history endpoints support pagination.
+- React routes are lazy-loaded.
+- Socket delivery tracks active users in memory for local development. Production can replace this with Redis adapter support.
