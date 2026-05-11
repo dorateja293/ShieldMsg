@@ -86,6 +86,8 @@ npm run dev
 Frontend: `http://localhost:5173`
 Backend: `http://localhost:5000`
 
+For local MongoDB on Windows, prefer `mongodb://127.0.0.1:27017/sentinelchat` in `backend/.env`.
+
 ## Scripts
 
 ```bash
