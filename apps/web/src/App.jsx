@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -14,18 +14,9 @@ import {
   UserRound,
   X
 } from "lucide-react";
-import { fetchScanHistory, FileScanInput, MessageScanResult, RiskLevel, ScanHistoryRecord, scanMessage } from "./api";
+import { fetchScanHistory, scanMessage } from "./api";
 
-interface ChatMessage {
-  id: number;
-  sender: "me" | "friend";
-  text: string;
-  files: FileScanInput[];
-  scan: MessageScanResult;
-  time: string;
-}
-
-const initialMessages: ChatMessage[] = [
+const initialMessages = [
   {
     id: 1,
     sender: "friend",
@@ -66,13 +57,13 @@ const sampleDrafts = [
 
 function App() {
   const [draft, setDraft] = useState("");
-  const [files, setFiles] = useState<FileScanInput[]>([]);
+  const [files, setFiles] = useState([]);
   const [messages, setMessages] = useState(initialMessages);
-  const [draftScan, setDraftScan] = useState<MessageScanResult | null>(null);
-  const [scanHistory, setScanHistory] = useState<ScanHistoryRecord[]>([]);
-  const [scanState, setScanState] = useState<"idle" | "scanning" | "error">("idle");
-  const [historyState, setHistoryState] = useState<"idle" | "loading" | "error">("idle");
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [draftScan, setDraftScan] = useState(null);
+  const [scanHistory, setScanHistory] = useState([]);
+  const [scanState, setScanState] = useState("idle");
+  const [historyState, setHistoryState] = useState("idle");
+  const fileInputRef = useRef(null);
 
   const hasDraftContent = draft.trim().length > 0 || files.length > 0;
 
@@ -103,13 +94,13 @@ function App() {
   }, [draft, files, hasDraftContent]);
 
   const conversationRisk = useMemo(() => {
-    const riskOrder: RiskLevel[] = ["safe", "suspicious", "dangerous"];
-    return messages.reduce<RiskLevel>((highest, message) => {
+    const riskOrder = ["safe", "suspicious", "dangerous"];
+    return messages.reduce((highest, message) => {
       return riskOrder.indexOf(message.scan.level) > riskOrder.indexOf(highest) ? message.scan.level : highest;
     }, "safe");
   }, [messages]);
 
-  async function handleSend(event: FormEvent<HTMLFormElement>) {
+  async function handleSend(event) {
     event.preventDefault();
     if (!hasDraftContent) return;
 
@@ -147,7 +138,7 @@ function App() {
     }
   }
 
-  function handleFiles(event: ChangeEvent<HTMLInputElement>) {
+  function handleFiles(event) {
     const selectedFiles = Array.from(event.target.files ?? []).map((file) => ({
       name: file.name,
       mimeType: file.type || undefined,
@@ -327,7 +318,7 @@ function App() {
   );
 }
 
-function ScanSummary({ scan, compact = false }: { scan: MessageScanResult; compact?: boolean }) {
+function ScanSummary({ scan, compact = false }) {
   const flaggedItems = [...scan.urls, ...scan.files].filter((item) => item.level !== "safe");
 
   return (
@@ -345,7 +336,7 @@ function ScanSummary({ scan, compact = false }: { scan: MessageScanResult; compa
   );
 }
 
-function RiskBadge({ level }: { level: RiskLevel }) {
+function RiskBadge({ level }) {
   return (
     <span className={`risk-badge ${level}`}>
       <RiskIcon level={level} />
@@ -354,7 +345,7 @@ function RiskBadge({ level }: { level: RiskLevel }) {
   );
 }
 
-function RiskIcon({ level }: { level: RiskLevel }) {
+function RiskIcon({ level }) {
   if (level === "dangerous") return <ShieldAlert size={16} />;
   if (level === "suspicious") return <AlertTriangle size={16} />;
   return <CheckCircle2 size={16} />;

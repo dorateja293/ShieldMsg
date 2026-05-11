@@ -24,7 +24,7 @@ MongoDB stores scan history through Mongoose models. Each record captures the or
 
 ## Threat Engine
 
-The threat engine is a reusable TypeScript package. It scores URLs and file metadata using transparent rules:
+The threat engine is a reusable JavaScript package. It scores URLs and file metadata using transparent rules:
 
 - Missing HTTPS.
 - Shortened URLs.

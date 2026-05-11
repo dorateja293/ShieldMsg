@@ -1,21 +1,4 @@
 import { model, Schema } from "mongoose";
-import type { RiskLevel, ScanResult } from "@shieldmsg/threat-engine";
-
-export interface MessageScanRecord {
-  _id?: string;
-  text: string;
-  files: Array<{
-    name: string;
-    mimeType?: string;
-    sizeBytes?: number;
-  }>;
-  level: RiskLevel;
-  score: number;
-  urls: ScanResult[];
-  fileResults: ScanResult[];
-  summary: string;
-  createdAt: Date;
-}
 
 const scanReasonSchema = new Schema(
   {
@@ -48,7 +31,7 @@ const fileInputSchema = new Schema(
   { _id: false }
 );
 
-const scanRecordSchema = new Schema<MessageScanRecord>(
+const scanRecordSchema = new Schema(
   {
     text: { type: String, default: "" },
     files: { type: [fileInputSchema], default: [] },
@@ -67,4 +50,4 @@ const scanRecordSchema = new Schema<MessageScanRecord>(
 scanRecordSchema.index({ createdAt: -1 });
 scanRecordSchema.index({ level: 1, createdAt: -1 });
 
-export const ScanRecordModel = model<MessageScanRecord>("ScanRecord", scanRecordSchema);
+export const ScanRecordModel = model("ScanRecord", scanRecordSchema);

@@ -1,28 +1,3 @@
-export type ContentType = "url" | "file";
-export type RiskLevel = "safe" | "suspicious" | "dangerous";
-
-export interface ScanReason {
-  code: string;
-  message: string;
-  severity: RiskLevel;
-}
-
-export interface ScanResult {
-  target: string;
-  type: ContentType;
-  level: RiskLevel;
-  score: number;
-  reasons: ScanReason[];
-  recommendation: string;
-  scannedAt: string;
-}
-
-export interface FileScanInput {
-  name: string;
-  mimeType?: string;
-  sizeBytes?: number;
-}
-
 const shortenerHosts = new Set([
   "bit.ly",
   "tinyurl.com",
@@ -53,7 +28,7 @@ const suspiciousKeywords = [
   "update-now"
 ];
 
-const trustedBrandDomains: Record<string, string[]> = {
+const trustedBrandDomains = {
   whatsapp: ["whatsapp.com"],
   instagram: ["instagram.com", "cdninstagram.com"],
   google: ["google.com", "accounts.google.com"],
@@ -61,11 +36,11 @@ const trustedBrandDomains: Record<string, string[]> = {
   amazon: ["amazon.com"]
 };
 
-export function scanUrl(rawUrl: string): ScanResult {
-  const reasons: ScanReason[] = [];
+export function scanUrl(rawUrl) {
+  const reasons = [];
   const normalizedInput = rawUrl.trim();
   let score = 0;
-  let parsed: URL;
+  let parsed;
 
   try {
     parsed = new URL(normalizedInput.includes("://") ? normalizedInput : `https://${normalizedInput}`);
@@ -153,8 +128,8 @@ export function scanUrl(rawUrl: string): ScanResult {
   });
 }
 
-export function scanFile(input: FileScanInput): ScanResult {
-  const reasons: ScanReason[] = [];
+export function scanFile(input) {
+  const reasons = [];
   let score = 0;
   const fileName = input.name.trim();
   const extension = getExtension(fileName);
@@ -222,7 +197,7 @@ export function scanFile(input: FileScanInput): ScanResult {
   });
 }
 
-function buildResult(input: Omit<ScanResult, "level" | "recommendation" | "scannedAt">): ScanResult {
+function buildResult(input) {
   const normalizedScore = Math.min(100, Math.max(0, input.score));
   const level = toRiskLevel(normalizedScore);
 
@@ -235,23 +210,23 @@ function buildResult(input: Omit<ScanResult, "level" | "recommendation" | "scann
   };
 }
 
-function toRiskLevel(score: number): RiskLevel {
+function toRiskLevel(score) {
   if (score >= 60) return "dangerous";
   if (score >= 25) return "suspicious";
   return "safe";
 }
 
-function recommendationFor(level: RiskLevel): string {
+function recommendationFor(level) {
   if (level === "dangerous") return "Do not open this content. Delete it or verify through a trusted channel.";
   if (level === "suspicious") return "Open only if you trust the sender and can verify the source.";
   return "No obvious threat signals were detected. Stay cautious with unknown senders.";
 }
 
-function reason(code: string, message: string, severity: RiskLevel): ScanReason {
+function reason(code, message, severity) {
   return { code, message, severity };
 }
 
-function getExtension(value: string): string | undefined {
+function getExtension(value) {
   const cleanValue = value.split(/[?#]/)[0] ?? value;
   const lastSegment = cleanValue.split("/").pop() ?? cleanValue;
   const dotIndex = lastSegment.lastIndexOf(".");
@@ -259,15 +234,15 @@ function getExtension(value: string): string | undefined {
   return lastSegment.slice(dotIndex + 1).toLowerCase();
 }
 
-function isIpAddress(host: string): boolean {
+function isIpAddress(host) {
   return /^(\d{1,3}\.){3}\d{1,3}$/.test(host) || host.includes(":");
 }
 
-function hasDoubleExtension(fileName: string): boolean {
+function hasDoubleExtension(fileName) {
   return /\.[a-z0-9]{2,5}\.(apk|exe|scr|bat|cmd|msi|jar|vbs|ps1)$/i.test(fileName);
 }
 
-function detectBrandImpersonation(host: string): string | undefined {
+function detectBrandImpersonation(host) {
   return Object.entries(trustedBrandDomains).find(([brand, officialDomains]) => {
     const mentionsBrand = host.includes(brand);
     const isOfficial = officialDomains.some((domain) => host === domain || host.endsWith(`.${domain}`));

@@ -11,14 +11,11 @@
   "scripts": {
     "dev": "npm-run-all --parallel dev:*",
     "dev:web": "npm run dev --workspace @shieldmsg/web",
-    "dev:api": "npm run build --workspace @shieldmsg/threat-engine && npm run dev --workspace @shieldmsg/api",
+    "dev:api": "npm run dev --workspace @shieldmsg/api",
     "build": "npm run build --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present",
-    "typecheck": "npm run typecheck --workspaces --if-present"
+    "test": "npm run test --workspaces --if-present"
   },
   "devDependencies": {
-    "@types/node": "^22.15.17",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^5.8.3"
+    "npm-run-all": "^4.1.5"
   }
 }

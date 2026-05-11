@@ -7,17 +7,17 @@ ShieldMsg is a secure messaging prototype that scans shared links and files befo
 - Real-time message scanning for URLs and file metadata.
 - Threat indicators for phishing-style links, risky domains, URL shorteners, APKs, executable files, macro documents, and deceptive double extensions.
 - React messaging UI with safety badges, upload scanning, and sample suspicious messages.
-- Express API with typed scan endpoints.
-- Reusable TypeScript threat engine with unit tests.
+- Express API with validated scan endpoints.
+- Reusable JavaScript threat engine with unit tests.
 
 ## MERN Tech Stack
 
 - MongoDB: scan history persistence through Mongoose.
 - Express: REST API for link, file, message, and history endpoints.
 - React: secure messaging interface with real-time safety labels.
-- Node.js: API runtime and shared TypeScript workspace.
-- Core logic: TypeScript package with Vitest coverage.
-- Tooling: npm workspaces, strict TypeScript config.
+- Node.js: API runtime and shared JavaScript workspace.
+- Core logic: JavaScript package with Vitest coverage.
+- Tooling: npm workspaces, Vite, Node.js, and Vitest.
 
 ## Project Structure
 
@@ -58,7 +58,6 @@ If `MONGODB_URI` is not configured, the API still runs with temporary in-memory 
 
 ```bash
 npm run test
-npm run typecheck
 npm run build
 ```
 
@@ -82,8 +81,8 @@ curl -X POST http://localhost:4000/scan/message \
 
 - Designed a full-stack secure messaging prototype with real-time threat indicators.
 - Implemented the project using the MERN stack: MongoDB, Express, React, and Node.js.
-- Built a reusable TypeScript risk-scoring engine for URLs and file metadata.
-- Implemented typed REST endpoints with request validation and structured scan responses.
+- Built a reusable JavaScript risk-scoring engine for URLs and file metadata.
+- Implemented REST endpoints with request validation and structured scan responses.
 - Persisted scan history with MongoDB and Mongoose for auditability.
 - Created a polished React interface that visualizes content safety directly inside the chat flow.
 - Added unit tests for high-risk detection cases and safe-content baselines.

@@ -1,8 +1,8 @@
 import "dotenv/config";
 import cors from "cors";
-import express, { type ErrorRequestHandler } from "express";
+import express from "express";
 import { z } from "zod";
-import { scanFile, scanUrl, type RiskLevel, type ScanResult } from "@shieldmsg/threat-engine";
+import { scanFile, scanUrl } from "@shieldmsg/threat-engine";
 import { connectDatabase } from "./db.js";
 import { listRecentScanRecords, saveScanRecord } from "./scanHistory.js";
 
@@ -83,7 +83,7 @@ app.get("/scan/history", async (request, response) => {
   });
 });
 
-const errorHandler: ErrorRequestHandler = (error, _request, response, _next) => {
+const errorHandler = (error, _request, response, _next) => {
   if (error instanceof z.ZodError) {
     response.status(400).json({
       error: "Invalid request payload",
@@ -106,18 +106,18 @@ connectDatabase().finally(() => {
   });
 });
 
-function extractUrls(text: string): string[] {
+function extractUrls(text) {
   const matches = text.match(/\bhttps?:\/\/[^\s<>"']+|\b(?:[a-z0-9-]+\.)+[a-z]{2,}(?:\/[^\s<>"']*)?/gi);
   return [...new Set(matches ?? [])];
 }
 
-function highestRisk(results: ScanResult[]): RiskLevel {
+function highestRisk(results) {
   if (results.some((result) => result.level === "dangerous")) return "dangerous";
   if (results.some((result) => result.level === "suspicious")) return "suspicious";
   return "safe";
 }
 
-function summarizeMessage(results: ScanResult[]): string {
+function summarizeMessage(results) {
   if (results.length === 0) return "No links or files were detected in this message.";
 
   const level = highestRisk(results);
