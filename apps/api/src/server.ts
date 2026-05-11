@@ -1,7 +1,10 @@
+import "dotenv/config";
 import cors from "cors";
 import express, { type ErrorRequestHandler } from "express";
 import { z } from "zod";
 import { scanFile, scanUrl, type RiskLevel, type ScanResult } from "@shieldmsg/threat-engine";
+import { connectDatabase } from "./db.js";
+import { listRecentScanRecords, saveScanRecord } from "./scanHistory.js";
 
 const app = express();
 const port = Number(process.env.PORT ?? 4000);
@@ -46,19 +49,37 @@ app.post("/scan/file", (request, response) => {
   response.json(scanFile(file));
 });
 
-app.post("/scan/message", (request, response) => {
+app.post("/scan/message", async (request, response) => {
   const { text, files } = messageScanSchema.parse(request.body);
   const urlResults = extractUrls(text).map(scanUrl);
   const fileResults = files.map((file) => scanFile(file));
   const results = [...urlResults, ...fileResults];
-
-  response.json({
+  const scan = {
     level: highestRisk(results),
     score: results.length ? Math.max(...results.map((result) => result.score)) : 0,
     urls: urlResults,
     files: fileResults,
     summary: summarizeMessage(results),
     scannedAt: new Date().toISOString()
+  };
+
+  await saveScanRecord({
+    text,
+    files,
+    level: scan.level,
+    score: scan.score,
+    urls: scan.urls,
+    fileResults: scan.files,
+    summary: scan.summary
+  });
+
+  response.json(scan);
+});
+
+app.get("/scan/history", async (request, response) => {
+  const limit = z.coerce.number().int().min(1).max(25).default(10).parse(request.query.limit);
+  response.json({
+    records: await listRecentScanRecords(limit)
   });
 });
 
@@ -79,8 +100,10 @@ const errorHandler: ErrorRequestHandler = (error, _request, response, _next) => 
 
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`ShieldMsg API listening on http://localhost:${port}`);
+connectDatabase().finally(() => {
+  app.listen(port, () => {
+    console.log(`ShieldMsg API listening on http://localhost:${port}`);
+  });
 });
 
 function extractUrls(text: string): string[] {
