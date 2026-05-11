@@ -70,13 +70,10 @@ registerChatSocket(io);
 
 const port = Number(process.env.PORT ?? 5000);
 
-connectDatabase()
-  .then(() => {
-    server.listen(port, () => {
-      console.log(`SentinelChat API running on http://localhost:${port}`);
-    });
-  })
-  .catch((error) => {
-    console.error("Failed to start SentinelChat API", error);
-    process.exit(1);
-  });
+server.listen(port, () => {
+  console.log(`SentinelChat API running on http://localhost:${port}`);
+});
+
+connectDatabase().catch((error) => {
+  console.error("MongoDB connection failed. API is running, but database-backed features require MongoDB.", error.message);
+});
