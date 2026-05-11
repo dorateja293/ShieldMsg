@@ -10,6 +10,14 @@ ShieldMsg is a secure messaging prototype that detects risky links and files bef
 4. Web experience: messaging UI with real-time safety labels and upload scanning.
 5. Polish: README, architecture notes, demo instructions, and resume-ready highlights.
 
+## Completed Commit Sequence
+
+- `chore: scaffold ShieldMsg monorepo`
+- `feat: add threat scoring engine`
+- `feat: expose scan API endpoints`
+- `feat: build real-time messaging interface`
+- `docs: document architecture and setup`
+
 ## Recruiter-Facing Goals
 
 - Clear separation of frontend, backend, and domain logic.
