@@ -7,5 +7,5 @@
     "moduleResolution": "NodeNext",
     "declaration": true
   },
-  "include": ["src", "test"]
+  "include": ["src"]
 }
