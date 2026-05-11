@@ -5,13 +5,13 @@
   "description": "Secure messaging prototype with real-time link and file threat indicators.",
   "type": "module",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "dev": "npm-run-all --parallel dev:*",
     "dev:web": "npm run dev --workspace @shieldmsg/web",
-    "dev:api": "npm run dev --workspace @shieldmsg/api",
+    "dev:api": "npm run build --workspace @shieldmsg/threat-engine && npm run dev --workspace @shieldmsg/api",
     "build": "npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present"
