@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import api from "../services/api.js";
+import { logoutSocket } from "../services/socket.js";
 
 const AuthContext = createContext(null);
 
@@ -24,6 +25,7 @@ export function AuthProvider({ children }) {
         localStorage.setItem("sentinelchat_user", JSON.stringify(data.user));
       })
       .catch(() => {
+        logoutSocket();
         localStorage.removeItem("sentinelchat_token");
         localStorage.removeItem("sentinelchat_user");
         setUser(null);
@@ -46,6 +48,7 @@ export function AuthProvider({ children }) {
   }
 
   function logout() {
+    logoutSocket();
     localStorage.removeItem("sentinelchat_token");
     localStorage.removeItem("sentinelchat_user");
     setUser(null);

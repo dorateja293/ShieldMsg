@@ -2,10 +2,22 @@ import { z } from "zod";
 import { User } from "../models/User.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
-const updateProfileSchema = z.object({
-  bio: z.string().max(240).optional(),
-  profilePicture: z.string().url().or(z.literal("")).optional()
-});
+const updateProfileSchema = z
+  .object({
+    bio: z.string().max(240).optional(),
+    profilePicture: z.string().max(2048).optional()
+  })
+  .superRefine((data, ctx) => {
+    const pic = data.profilePicture;
+    if (pic === undefined || pic === "") return;
+    if (!/^https?:\/\//i.test(pic) && !pic.startsWith("/uploads/")) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["profilePicture"],
+        message: "Profile picture must be a full URL or an uploaded file under /uploads/"
+      });
+    }
+  });
 
 export const listUsers = asyncHandler(async (request, response) => {
   const q = request.query.q ?? "";
@@ -20,8 +32,14 @@ export const listUsers = asyncHandler(async (request, response) => {
 });
 
 export const getProfile = asyncHandler(async (request, response) => {
-  const user = await User.findById(request.params.id)
-    .select("username email bio profilePicture onlineStatus friends followers following createdAt")
+  const targetId = request.params.id;
+  const isSelf = String(request.user._id) === String(targetId);
+  const fields = isSelf
+    ? "username email bio profilePicture onlineStatus friends followers following createdAt"
+    : "username bio profilePicture onlineStatus friends followers following createdAt";
+
+  const user = await User.findById(targetId)
+    .select(fields)
     .populate("friends", "username profilePicture onlineStatus")
     .populate("followers", "username profilePicture")
     .populate("following", "username profilePicture");

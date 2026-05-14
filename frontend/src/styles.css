@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: Inter, "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   color: #0f172a;
-  background: #f1f5f9;
+  background: #f7f8fa;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -17,6 +17,10 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(0, 168, 132, 0.09), transparent 26%),
+    radial-gradient(circle at top right, rgba(25, 118, 210, 0.08), transparent 24%),
+    #f7f8fa;
 }
 
 button,
@@ -44,10 +48,10 @@ button {
   display: grid;
   width: min(440px, 100%);
   gap: 20px;
-  border-radius: 8px;
+  border-radius: 24px;
   background: #ffffff;
   padding: 28px;
-  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
 }
 
 .auth-card h1 {
@@ -66,7 +70,7 @@ button {
 
 .field {
   width: 100%;
-  border-radius: 8px;
+  border-radius: 14px;
   border: 1px solid #cbd5e1;
   background: #f8fafc;
   padding: 12px 14px;
@@ -74,8 +78,8 @@ button {
 }
 
 .field:focus {
-  border-color: #0f766e;
-  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.14);
+  border-color: #25d366;
+  box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.14);
 }
 
 .primary-button {
@@ -84,11 +88,12 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border-radius: 8px;
-  background: #0f766e;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #25d366, #1faa59);
   padding: 0 16px;
   font-weight: 900;
   color: #ffffff;
+  box-shadow: 0 10px 24px rgba(37, 211, 102, 0.22);
 }
 
 .nav-link {
@@ -96,7 +101,7 @@ button {
   min-height: 40px;
   align-items: center;
   gap: 8px;
-  border-radius: 8px;
+  border-radius: 999px;
   padding: 0 12px;
   color: #475569;
   font-weight: 700;
@@ -104,8 +109,8 @@ button {
 
 .nav-link.active,
 .nav-link:hover {
-  background: #ecfdf5;
-  color: #0f766e;
+  background: #e7fce3;
+  color: #0b6b4b;
 }
 
 .side-link {
@@ -113,7 +118,7 @@ button {
   min-height: 44px;
   align-items: center;
   gap: 10px;
-  border-radius: 8px;
+  border-radius: 14px;
   padding: 0 12px;
   color: #cbd5e1;
   font-weight: 800;
@@ -121,8 +126,8 @@ button {
 
 .side-link:hover,
 .side-link-active {
-  background: rgba(20, 184, 166, 0.16);
-  color: #ccfbf1;
+  background: rgba(37, 211, 102, 0.15);
+  color: #effff7;
 }
 
 .icon-action {
@@ -130,7 +135,13 @@ button {
   min-height: 40px;
   min-width: 40px;
   place-items: center;
-  border-radius: 8px;
-  background: #ecfdf5;
-  color: #0f766e;
+  border-radius: 999px;
+  background: #e7fce3;
+  color: #0b6b4b;
+}
+
+/* WhatsApp-like chat wallpaper (light) */
+.wa-chat-pattern {
+  background-color: #efeae2;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cg fill='%23000' fill-opacity='0.022'%3E%3Cpath d='M60 40h20v20H60zm80 0h20v20h-20zm80 0h20v20h-20zM20 100h20v20H20zm80 0h20v20h-20zm80 0h20v20h-20zm80 0h20v20h-20zM60 160h20v20H60zm80 0h20v20h-20zm80 0h20v20h-20zM20 220h20v20H20zm80 0h20v20h-20zm80 0h20v20h-20zm80 0h20v20h-20z'/%3E%3C/g%3E%3C/svg%3E");
 }

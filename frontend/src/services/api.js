@@ -1,4 +1,5 @@
 import axios from "axios";
+import { logoutSocket } from "./socket.js";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:5000/api",
@@ -17,6 +18,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      logoutSocket();
       localStorage.removeItem("sentinelchat_token");
       localStorage.removeItem("sentinelchat_user");
     }

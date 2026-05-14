@@ -12,6 +12,13 @@ export function getSocket() {
     });
   }
 
-  socket.auth = { token };
+  socket.auth = { token: token ?? undefined };
   return socket;
+}
+
+/** Clears auth and drops the Socket.IO connection (e.g. logout or 401). */
+export function logoutSocket() {
+  if (!socket) return;
+  socket.auth = {};
+  socket.disconnect();
 }

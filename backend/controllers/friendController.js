@@ -3,8 +3,21 @@ import { User } from "../models/User.js";
 import { createNotification } from "../services/notificationService.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
+export const listFriends = asyncHandler(async (request, response) => {
+  const user = await User.findById(request.user._id).populate(
+    "friends",
+    "username email bio profilePicture onlineStatus"
+  );
+
+  if (!user) {
+    return response.status(401).json({ message: "Invalid session" });
+  }
+
+  response.json({ users: user.friends });
+});
+
 export const sendFriendRequest = asyncHandler(async (request, response) => {
-  if (request.params.userId === request.user.id) {
+  if (String(request.params.userId) === String(request.user._id)) {
     return response.status(400).json({ message: "Cannot add yourself" });
   }
 
