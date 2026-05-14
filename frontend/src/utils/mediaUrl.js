@@ -1,3 +1,5 @@
+import { getApiBaseUrl } from "../config/apiBaseUrl.js";
+
 /** Resolve stored paths for <img src> and links. */
 export function mediaUrl(path) {
   if (!path || typeof path !== "string") return "";
@@ -9,7 +11,7 @@ export function mediaUrl(path) {
     return trimmed;
   }
 
-  const api = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api";
+  const api = getApiBaseUrl();
   const origin = api.replace(/\/api\/?$/i, "") || "http://localhost:5000";
   return trimmed.startsWith("/") ? `${origin}${trimmed}` : `${origin}/${trimmed}`;
 }

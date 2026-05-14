@@ -1,9 +1,11 @@
 import axios from "axios";
+import { getApiBaseUrl } from "../config/apiBaseUrl.js";
 import { logoutSocket } from "./socket.js";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:5000/api",
-  withCredentials: true
+  baseURL: getApiBaseUrl(),
+  // JWT is sent via Authorization header; cookies are not required for auth.
+  withCredentials: false
 });
 
 api.interceptors.request.use((config) => {

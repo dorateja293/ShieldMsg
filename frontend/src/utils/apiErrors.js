@@ -18,7 +18,16 @@ export function extractFieldErrors(error) {
 }
 
 export function firstApiMessage(error) {
-  const data = error?.response?.data;
+  if (!error?.response) {
+    const code = error?.code;
+    const msg = typeof error?.message === "string" ? error.message : "";
+    if (code === "ERR_NETWORK" || msg === "Network Error") {
+      return "Cannot reach the API. Set VITE_API_URL on Vercel to https://your-backend.onrender.com/api (or the host only; /api is added automatically), redeploy, and set CLIENT_URL on Render to this site’s origin (https://…, no path).";
+    }
+    if (msg) return msg;
+    return "No response from the server.";
+  }
+  const data = error.response.data;
   if (typeof data?.message === "string") return data.message;
   return "";
 }

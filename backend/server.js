@@ -34,7 +34,7 @@ function clientOriginsFromEnv() {
 const jwtSecret = process.env.JWT_SECRET ?? "";
 if (jwtSecret.length < 16) {
   console.error(
-    "JWT_SECRET must be set to a secret at least 16 characters long (see backend/.env.example)."
+    "JWT_SECRET must be set to a secret at least 16 characters long (see backend/.env)."
   );
   process.exit(1);
 }
@@ -92,6 +92,7 @@ const port = Number(process.env.PORT ?? 5000);
 
 server.listen(port, () => {
   console.log(`SentinelChat API listening on port ${port}`);
+  console.log(`CORS / Socket.IO browser origins: ${clientOrigins.join(", ")}`);
 });
 
 connectDatabase().catch((error) => {
