@@ -5,7 +5,8 @@
 1. Set root directory to `frontend`.
 2. Build command: `npm run build`.
 3. Output directory: `dist`.
-4. Add environment variables:
+4. The repo includes `frontend/vercel.json` so deep links and refresh work (`BrowserRouter` SPA fallback to `index.html`).
+5. Add environment variables:
    - `VITE_API_URL` — your Render **HTTPS** API host, with or without `/api` (e.g. `https://your-api.onrender.com` or `https://your-api.onrender.com/api`). The build normalizes a missing `/api` suffix.
    - `VITE_SOCKET_URL` — same host **without** `/api` (e.g. `https://your-api.onrender.com`). Optional if you only set `VITE_API_URL`; the client derives the socket URL from it.
 
