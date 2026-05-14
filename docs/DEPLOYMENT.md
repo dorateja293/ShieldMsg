@@ -15,7 +15,7 @@
 2. Start command: `npm start`.
 3. Add environment variables from `backend/.env.example`.
 4. Configure persistent disk or object storage for uploaded files in production.
-5. Set `CLIENT_URL` to the deployed Vercel URL.
+5. Set `CLIENT_URL` to the deployed Vercel **origin** (e.g. `https://your-app.vercel.app`, not a path like `/login`). For local dev hitting production API, use a comma-separated list: `http://localhost:5173,https://your-app.vercel.app` (no spaces).
 
 ## Database: MongoDB Atlas
 
